@@ -1,0 +1,45 @@
+<div th:switch="${authors}" xmlns:th="http://www.w3.org/1999/xhtml">
+    <h2 th:case="null">No authors yet!</h2>
+    <div th:case="*">
+        <h2>Users</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="author : ${authors.content}">
+                <td th:text="${author.name}"></td>
+                <td th:text="${author.address}"></td>
+                <td><a th:href="@{/update/{id}(id=${author.id})}">Edit</a></td>
+                <td><a th:href="@{/delete/{id}(id=${author.id})}">Delete</a></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="pagination">
+            <a th:if="${!authors.first}"
+               th:href="@{/index(page=${authors.number - 1}, size=${authors.size})}">
+                Previous
+            </a>
+
+            <span th:each="i : ${#numbers.sequence(0, authors.totalPages - 1)}">
+                <a th:if="${i != authors.number}"
+                   th:href="@{/index(page=${i}, size=${authors.size})}"
+                   th:text="${i + 1}"></a>
+                <span th:if="${i == authors.number}"
+                      th:text="${i + 1}"
+                      style="font-weight: bold"></span>
+            </span>
+
+            <a th:if="${!authors.last}"
+               th:href="@{/index(page=${authors.number + 1}, size=${authors.size})}">
+                Next
+            </a>
+        </div>
+    </div>
+    <p><a href="/addUserForm">Add a new author</a></p>
+</div>
