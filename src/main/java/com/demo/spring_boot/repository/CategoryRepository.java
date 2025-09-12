@@ -1,6 +1,6 @@
-package com.nta.learning.repository;
+package com.demo.spring_boot.repository;
 
-import com.nta.learning.entity.Category;
+import com.demo.spring_boot.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

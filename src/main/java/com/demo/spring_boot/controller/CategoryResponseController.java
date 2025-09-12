@@ -1,12 +1,12 @@
-package com.nta.learning.controller;
+package com.demo.spring_boot.controller;
 
-import com.nta.learning.dto.category.CreateCategoryRequest;
-import com.nta.learning.dto.category.UpdateCategoryRequest;
-import com.nta.learning.entity.Category;
-import com.nta.learning.entity.Post;
-import com.nta.learning.exception.ResourceNotFoundException;
-import com.nta.learning.repository.CategoryRepository;
-import com.nta.learning.repository.PostRepository;
+import com.demo.spring_boot.dto.category.CreateCategoryRequest;
+import com.demo.spring_boot.dto.category.UpdateCategoryRequest;
+import com.demo.spring_boot.entity.Category;
+import com.demo.spring_boot.entity.Post;
+import com.demo.spring_boot.exception.ResourceNotFoundException;
+import com.demo.spring_boot.repository.CategoryRepository;
+import com.demo.spring_boot.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

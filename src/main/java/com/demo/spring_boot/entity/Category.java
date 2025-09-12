@@ -1,4 +1,4 @@
-package com.nta.learning.entity;
+package com.demo.spring_boot.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;

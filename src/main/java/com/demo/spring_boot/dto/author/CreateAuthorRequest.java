@@ -1,4 +1,4 @@
-package com.nta.learning.dto.author;
+package com.demo.spring_boot.dto.author;
 
 import jakarta.validation.constraints.NotBlank;
 

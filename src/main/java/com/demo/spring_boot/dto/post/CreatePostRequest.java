@@ -1,4 +1,4 @@
-package com.nta.learning.dto.post;
+package com.demo.spring_boot.dto.post;
 
 import jakarta.validation.constraints.NotBlank;
 

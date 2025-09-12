@@ -1,7 +1,7 @@
-package com.nta.learning.controller;
+package com.demo.spring_boot.controller;
 
-import com.nta.learning.entity.Author;
-import com.nta.learning.repository.AuthorRepository;
+import com.demo.spring_boot.entity.Author;
+import com.demo.spring_boot.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

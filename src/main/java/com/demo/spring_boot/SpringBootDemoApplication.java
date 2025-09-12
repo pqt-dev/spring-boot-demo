@@ -1,12 +1,12 @@
-package com.nta.learning;
+package com.demo.spring_boot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LearningSpringBootApplication {
+public class SpringBootDemoApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(LearningSpringBootApplication.class, args);
+        SpringApplication.run(SpringBootDemoApplication.class, args);
     }
 }

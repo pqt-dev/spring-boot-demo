@@ -1,4 +1,4 @@
-package com.nta.learning.dto.author;
+package com.demo.spring_boot.dto.author;
 
 public class UpdateAuthorRequest {
     public String name;

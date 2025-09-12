@@ -1,6 +1,6 @@
-package com.nta.learning.repository;
+package com.demo.spring_boot.repository;
 
-import com.nta.learning.entity.Post;
+import com.demo.spring_boot.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;

@@ -1,8 +1,11 @@
-package com.nta.learning.dto.category;
+package com.demo.spring_boot.dto.category;
+
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
-public class UpdateCategoryRequest {
+public class CreateCategoryRequest {
+    @NotBlank(message = "Category name is required")
     private String name;
     private String description;
     private List<Long> postIds;

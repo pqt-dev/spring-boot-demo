@@ -1,10 +1,10 @@
-package com.nta.learning.controller;
+package com.demo.spring_boot.controller;
 
-import com.nta.learning.dto.author.CreateAuthorRequest;
-import com.nta.learning.dto.author.UpdateAuthorRequest;
-import com.nta.learning.entity.Author;
-import com.nta.learning.exception.ResourceNotFoundException;
-import com.nta.learning.repository.AuthorRepository;
+import com.demo.spring_boot.dto.author.CreateAuthorRequest;
+import com.demo.spring_boot.dto.author.UpdateAuthorRequest;
+import com.demo.spring_boot.entity.Author;
+import com.demo.spring_boot.exception.ResourceNotFoundException;
+import com.demo.spring_boot.repository.AuthorRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +28,12 @@ public class AuthorResponseController {
     public Page<Author> fetch(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         final Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         return repository.findAll(pageable);
+    }
+
+    @PostMapping("/authors/search")
+    public Page<Author> searchByKeyword(@RequestParam(defaultValue = "") String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        final Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return repository.findByNameContainingIgnoreCaseOrAddressContainingIgnoreCaseOrPhoneContainingIgnoreCase(keyword, keyword, keyword, pageable);
     }
 
     @PostMapping("/authors")

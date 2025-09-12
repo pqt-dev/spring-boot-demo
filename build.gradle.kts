@@ -8,12 +8,6 @@ group = "com.nta"
 version = "0.0.1-SNAPSHOT"
 description = "Demo project for Spring Boot"
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
 repositories {
     mavenCentral()
 }
