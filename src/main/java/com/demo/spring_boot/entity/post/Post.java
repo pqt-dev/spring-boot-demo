@@ -1,13 +1,19 @@
-package com.demo.spring_boot.entity;
+package com.demo.spring_boot.entity.post;
 
+import com.demo.spring_boot.entity.author.Author;
+import com.demo.spring_boot.entity.category.Category;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
 @Table(name = "posts")
+@Getter
+@Setter
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,43 +37,5 @@ public class Post {
     @JsonIgnoreProperties({"posts"})
     private List<Category> categories;
 
-    public List<Category> getCategories() {
-        return categories;
-    }
 
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Author getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(Author author) {
-        this.author = author;
-    }
 }

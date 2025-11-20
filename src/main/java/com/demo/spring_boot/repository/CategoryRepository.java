@@ -1,6 +1,6 @@
 package com.demo.spring_boot.repository;
 
-import com.demo.spring_boot.entity.Category;
+import com.demo.spring_boot.entity.category.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

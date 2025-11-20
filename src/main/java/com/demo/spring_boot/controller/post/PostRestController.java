@@ -1,9 +1,9 @@
-package com.demo.spring_boot.controller;
+package com.demo.spring_boot.controller.post;
 
 import com.demo.spring_boot.dto.post.CreatePostRequest;
-import com.demo.spring_boot.entity.Author;
-import com.demo.spring_boot.entity.Category;
-import com.demo.spring_boot.entity.Post;
+import com.demo.spring_boot.entity.author.Author;
+import com.demo.spring_boot.entity.category.Category;
+import com.demo.spring_boot.entity.post.Post;
 import com.demo.spring_boot.exception.ResourceNotFoundException;
 import com.demo.spring_boot.repository.AuthorRepository;
 import com.demo.spring_boot.repository.CategoryRepository;
@@ -18,27 +18,32 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class PostResponseController {
+public class PostRestController {
     final PostRepository repository;
     final AuthorRepository authorRepository;
     final CategoryRepository categoryRepository;
 
     @Autowired
-    public PostResponseController(PostRepository repository, AuthorRepository authorRepository, CategoryRepository categoryRepository) {
+    public PostRestController(PostRepository repository, AuthorRepository authorRepository,
+                              CategoryRepository categoryRepository) {
         this.repository = repository;
         this.authorRepository = authorRepository;
         this.categoryRepository = categoryRepository;
     }
 
     @GetMapping("/posts")
-    public Page<Post> allPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        final Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+    public Page<Post> allPosts(@RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "10") int size) {
+        final Pageable pageable = PageRequest.of(page, size, Sort.by("id")
+                                                                 .descending());
         return repository.findAll(pageable);
     }
 
     @PostMapping("/posts")
     public Post add(@RequestBody CreatePostRequest request) {
-        final Author author = authorRepository.findById(request.getAuthorId()).orElseThrow(() -> new ResourceNotFoundException("Author", request.getAuthorId()));
+        final Author author = authorRepository.findById(request.getAuthorId())
+                                              .orElseThrow(() -> new ResourceNotFoundException("Author",
+                                                      request.getAuthorId()));
         final List<Category> categories = categoryRepository.findAllById(request.getCategories());
         Post post = new Post();
         post.setTitle(request.getTitle());
