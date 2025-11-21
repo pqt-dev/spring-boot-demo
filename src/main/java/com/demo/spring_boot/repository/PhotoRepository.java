@@ -13,4 +13,5 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
     Page<Photo> findByAuthorAndIsLocalTrue(Author author, Pageable pageable);
 
     Page<Photo> findByAuthorAndIsLocalFalse(Author author, Pageable pageable);
+
 }
