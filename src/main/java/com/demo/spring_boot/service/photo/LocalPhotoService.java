@@ -2,11 +2,13 @@ package com.demo.spring_boot.service.photo;
 
 import com.demo.spring_boot.entity.author.Author;
 import com.demo.spring_boot.entity.photo.Photo;
+import com.demo.spring_boot.repository.AuthorRepository;
 import com.demo.spring_boot.repository.PhotoRepository;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,14 +20,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Profile("dev")
+//@Profile("dev")
 public class LocalPhotoService implements PhotoService {
+    final AuthorRepository authorRepository;
     final private PhotoRepository repository;
     @Value("${app.storage.local.path}")
     private String uploadDirectory;
 
-    public LocalPhotoService(PhotoRepository repository) {
+    public LocalPhotoService(PhotoRepository repository, AuthorRepository authorRepository) {
         this.repository = repository;
+        this.authorRepository = authorRepository;
     }
 
     @Override
@@ -35,16 +39,24 @@ public class LocalPhotoService implements PhotoService {
 
     @Override
     public List<String> upload(List<MultipartFile> files) throws IOException {
-        List<String> result = new ArrayList<>();
+        List<String> response = new ArrayList<>();
         String rootPath = System.getProperty("user.dir");
         Path uploadPath = Paths.get(rootPath, uploadDirectory);
+        final var authentication = SecurityContextHolder.getContext()
+                                                        .getAuthentication();
+        final Claims claims = (Claims) authentication.getPrincipal();
+        final String email = (String) claims.get("email");
+        final Author author = authorRepository.findByEmail(email)
+                                              .orElseThrow();
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
         for (MultipartFile file : files) {
-            result.add(singleUpload(file));
+            final String path = singleUpload(file);
+            final var photo = savePhoto(author, path);
+            response.add(photo.getPhotoUrl());
         }
-        return result;
+        return response;
     }
 
     @Override

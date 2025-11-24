@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: spring_boot_demo
+  datasource:
+    url: jdbc:mysql://localhost:3306/JavaSpringBootDemo?useSSL=false
+    username: root
+    password: Command@218
+  # jpa:
+  #   hibernate:
+  #     ddl-auto: update
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 500KB
+      max-request-size: 1MB
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+
+logging:
+  level:
+    org.hibernate: ERROR
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+
+server:
+  error:
+    include-message: always
+    include-stacktrace: always
+
+firebase:
+  bucket-name: steptracker-b74db.appspot.com
+  service-account: classpath:steptracker-b74db-firebase-adminsdk-rv3on-69b20913d4.json
+  blob-path: JavaSpringBootDemo/Uploads/
+
+app:
+  storage:
+    local:
+      path: uploads

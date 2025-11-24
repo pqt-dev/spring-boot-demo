@@ -2,15 +2,17 @@ package com.demo.spring_boot.service.photo;
 
 import com.demo.spring_boot.entity.author.Author;
 import com.demo.spring_boot.entity.photo.Photo;
+import com.demo.spring_boot.repository.AuthorRepository;
 import com.demo.spring_boot.repository.PhotoRepository;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,8 +20,9 @@ import java.io.IOException;
 import java.util.*;
 
 @Service
-@Profile("prod")
+//@Profile("prod")
 public class FirebasePhotoService implements PhotoService {
+    final AuthorRepository authorRepository;
     final private Storage storage;
     final private ImageValidationService imageValidationService;
     final private PhotoRepository repository;
@@ -30,10 +33,12 @@ public class FirebasePhotoService implements PhotoService {
 
 
     public FirebasePhotoService(Storage storage,
-                                ImageValidationService imageValidationService, PhotoRepository repository) {
+                                ImageValidationService imageValidationService, PhotoRepository repository,
+                                AuthorRepository authorRepository) {
         this.storage = storage;
         this.imageValidationService = imageValidationService;
         this.repository = repository;
+        this.authorRepository = authorRepository;
     }
 
     @Override
@@ -44,8 +49,16 @@ public class FirebasePhotoService implements PhotoService {
     @Override
     public List<String> upload(List<MultipartFile> files) throws IOException {
         List<String> response = new ArrayList<>();
+        final var authentication = SecurityContextHolder.getContext()
+                                                        .getAuthentication();
+        final Claims claims = (Claims) authentication.getPrincipal();
+        final String email = (String) claims.get("email");
+        final Author author = authorRepository.findByEmail(email)
+                                              .orElseThrow();
         for (MultipartFile multipartFile : files) {
-            response.add(uploadFile(multipartFile));
+            final String url = uploadFile(multipartFile);
+            final var photo = savePhoto(author, url);
+            response.add(photo.getPhotoUrl());
         }
         return response;
     }

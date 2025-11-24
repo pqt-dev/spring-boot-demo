@@ -1,9 +1,10 @@
 package com.demo.spring_boot.controller.upload;
 
-import com.demo.spring_boot.entity.author.Author;
+import com.demo.spring_boot.config.EnvConfig;
 import com.demo.spring_boot.repository.AuthorRepository;
 import com.demo.spring_boot.response.ApiResponse;
-import com.demo.spring_boot.service.photo.PhotoService;
+import com.demo.spring_boot.service.photo.FirebasePhotoService;
+import com.demo.spring_boot.service.photo.LocalPhotoService;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -25,39 +26,51 @@ import java.util.List;
 @RestController
 public class UploadRestController {
 
-    final private PhotoService photoService;
+    //    final private PhotoService photoService;
     final private AuthorRepository authorRepository;
+
+    final private EnvConfig envConfig;
+    final private LocalPhotoService localPhotoService;
+    final private FirebasePhotoService firebasePhotoService;
 
 
     @Autowired
-    public UploadRestController(PhotoService photoService, AuthorRepository authorRepository) {
-        this.photoService = photoService;
+    public UploadRestController(
+//            PhotoService photoService,
+            AuthorRepository authorRepository, EnvConfig envConfig,
+            LocalPhotoService localPhotoService, FirebasePhotoService firebasePhotoService) {
+//        this.photoService = photoService;
         this.authorRepository = authorRepository;
+        this.envConfig = envConfig;
+        this.localPhotoService = localPhotoService;
+        this.firebasePhotoService = firebasePhotoService;
     }
 
     // Uploading a file
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ResponseEntity<?> uploadFile(@RequestParam("files") List<MultipartFile> files,
                                         @AuthenticationPrincipal Claims claims) throws IOException {
-        final String email = claims.get("email")
-                                   .toString();
-        final Author author = authorRepository.findByEmail(email)
-                                              .orElseThrow();
 
-        final List<String> response = photoService.upload(files);
-        // TODO: remove set avatar
-        author.setAvatar(response.getFirst());
-        authorRepository.save(author);
-
-        // TODO: Consider separate responsible
-
-        response.forEach(url -> {
-            try {
-                photoService.savePhoto(author, url);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        final List<String> response;
+        if (envConfig.isProd()) {
+            response = firebasePhotoService.upload(files);
+        } else {
+            response = localPhotoService.upload(files);
+        }
+//        final List<String> response = photoService.upload(files);
+//        // TODO: remove set avatar
+//        author.setAvatar(response.getFirst());
+//        authorRepository.save(author);
+//
+//        // TODO: Consider separate responsible
+//
+//        response.forEach(url -> {
+//            try {
+//                photoService.savePhoto(author, url);
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
 
 
         return ResponseEntity.ok(ApiResponse.builder()

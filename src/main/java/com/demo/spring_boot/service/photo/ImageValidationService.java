@@ -48,5 +48,7 @@ public class ImageValidationService {
             throw new ImageTypeException();
         }
     }
+
+
 }
 
