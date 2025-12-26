@@ -1,6 +1,5 @@
 package com.demo.spring_boot.dto.post;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,10 +7,8 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CreatePostRequest {
-    @NotBlank(message = "Title is required")
+public class UpdatePostRequest {
     private String title;
     private String content;
-    @NotBlank(message = "Category is required")
     private List<Long> categories;
 }

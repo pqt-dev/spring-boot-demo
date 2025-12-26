@@ -2,7 +2,6 @@ package com.demo.spring_boot.entity.post;
 
 import com.demo.spring_boot.entity.author.Author;
 import com.demo.spring_boot.entity.category.Category;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -14,6 +13,12 @@ import java.util.List;
 @Table(name = "posts")
 @Getter
 @Setter
+@NamedEntityGraph(
+        name = "Post.author",
+        attributeNodes = {
+                @NamedAttributeNode("author")
+        }
+)
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,16 +30,14 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "author_id")
-    @JsonIgnoreProperties({"posts"})
     private Author author;
 
     @ManyToMany
     @JoinTable(
-            name = "post_category",
+            name = "posts_categories",
             joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id")
     )
-    @JsonIgnoreProperties({"posts"})
     private List<Category> categories;
 
 

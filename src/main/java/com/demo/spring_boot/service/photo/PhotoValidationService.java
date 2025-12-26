@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class ImageValidationService {
+public class PhotoValidationService {
 
     private static final List<String> ALLOWED_TYPES = List.of("image/png", "image/jpeg");
     private static final List<String> ALLOWED_EXTENSIONS = List.of("png", "jpg", "jpeg");
 
     public void validateImage(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new IllegalArgumentException(ErrorType.FILE_EMPTY.getDetails());
+            throw new IllegalArgumentException(ErrorType.FILE_EMPTY.getDefaultMessage());
         }
 
         // Check MIME type

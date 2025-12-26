@@ -33,6 +33,9 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt:0.13.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1")
     implementation("me.paulschwarz:spring-dotenv:4.0.0")
+    implementation("org.mapstruct:mapstruct:1.6.3")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+
 }
 
 tasks.withType<Test> {

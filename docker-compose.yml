@@ -1,0 +1,59 @@
+version: '3.8'
+services:
+  # DEV environment
+  dev-db:
+    image: mysql:8
+    container_name: springboot-dev-db
+    environment:
+      MYSQL_DATABASE: java_spring_boot_dev
+      MYSQL_ROOT_PASSWORD: Command@218
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      retries: 5
+    volumes:
+      - ./docker/mysql-init/dev.sql:/docker-entrypoint-initdb.d/dev.sql
+
+  dev-app:
+    build: .
+    container_name: springboot-dev-app
+    depends_on:
+      dev-db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+
+  # PROD environment
+  prod-db:
+    image: mysql:8
+    container_name: springboot-prod-db
+    environment:
+      MYSQL_DATABASE: java_spring_boot_prod
+      MYSQL_ROOT_PASSWORD: Command@218
+    ports:
+      - "3308:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      retries: 5
+    volumes:
+      - ./docker/mysql-init/prod.sql:/docker-entrypoint-initdb.d/prod.sql
+
+  prod-app:
+    build: .
+    container_name: springboot-prod-app
+    depends_on:
+      prod-db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env

@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/java_spring_boot_prod?allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: Command@218
+server:
+  servlet:
+    context-path: /api
+  port: 8080

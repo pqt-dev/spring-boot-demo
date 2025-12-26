@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class LoginResponse {
+    private final String type = "Bearer";
     private String token;
-    private String type = "Bearer";
     private String email;
     private String name;
     private Long expiresIn; // seconds
