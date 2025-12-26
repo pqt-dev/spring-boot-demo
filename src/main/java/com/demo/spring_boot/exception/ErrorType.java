@@ -4,22 +4,24 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorType {
-    AUTH_INVALID_CREDENTIALS("AUTH_INVALID_CREDENTIALS", "Username or password is incorrect"),
-    AUTH_EXPIRED_TOKEN("AUTH_EXPIRED_TOKEN", "Token has expired"),
-    AUTH_FORBIDDEN("AUTH_FORBIDDEN", "Full authentication is required to access this resource"),
-    VALIDATION_ERROR("VALIDATION_ERROR", "Validation failed"),
-    MAX_UPLOAD_SIZE("MAX_UPLOAD_SIZE", "File size must be less than 10MB!"),
-    RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND", "Resource not found"),
-    FILE_TYPE_INVALID("FILE_TYPE_INVALID", "Invalid file type: only PNG, JPG, JPEG are allowed!"),
-    FILE_EMPTY("FILE_EMPTY", "File is empty"),
-    ;
+    AUTH_INVALID_CREDENTIALS("Username or password is incorrect"),
+    AUTH_EXPIRED_TOKEN("Token has expired"),
+    AUTH_FORBIDDEN("Full authentication is required"),
+    VALIDATION_ERROR("Validation failed"),
+    FILE_SIZE_LIMIT("File size must be less than 500KB"),
+    REQUEST_SIZE_LIMIT("Request size must be less than 1MB"),
+    RESOURCE_NOT_FOUND("Resource not found"),
+    FILE_TYPE_INVALID("Invalid file type"),
+    FILE_EMPTY("File is empty");
 
-    private final String code;
-    private final String details;
+    private final String defaultMessage;
 
-    ErrorType(String code, String details) {
-        this.code = code;
-        this.details = details;
+    ErrorType(String defaultMessage) {
+        this.defaultMessage = defaultMessage;
     }
 
+    public String getCode() {
+        return name();
+    }
 }
+

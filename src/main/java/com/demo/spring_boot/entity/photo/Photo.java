@@ -1,33 +1,41 @@
 package com.demo.spring_boot.entity.photo;
 
 import com.demo.spring_boot.entity.author.Author;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "author_photos")
+@Table(name = "authors_photos")
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Photo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false)
     private String photoUrl;
-    @Column(name = "uploaded_at", insertable = false, updatable = false)
+    @Column(name = "uploaded_at", updatable = false)
+    @CreationTimestamp
     private LocalDateTime uploadedAt;
-
-
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    @JsonIgnoreProperties({"photos"})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    private Boolean isLocal;
+    public Photo(Author author, String photoUrl) {
+        if (author == null) {
+            throw new IllegalArgumentException("`author` must not be null");
+        }
+        if (photoUrl == null || photoUrl.isBlank()) {
+            throw new IllegalArgumentException("`photoUrl` must not be blank");
+        }
+        this.author = author;
+        this.photoUrl = photoUrl;
+    }
 }

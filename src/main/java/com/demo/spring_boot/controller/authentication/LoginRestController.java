@@ -54,7 +54,9 @@ public class LoginRestController {
         SecurityContextHolder.getContext()
                              .setAuthentication(authentication);
         String jwt = jwtTokenProvider.generateToken(authentication);
-        LoginResponse response = new LoginResponse();
+        LoginResponse response = LoginResponse.builder()
+                                              .token(jwt)
+                                              .build();
         response.setToken(jwt);
         return ResponseEntity.ok(ApiResponse.builder()
                                             .data(response)
@@ -97,10 +99,11 @@ public class LoginRestController {
             SecurityContextHolder.getContext()
                                  .setAuthentication(authentication);
             String jwt = jwtTokenProvider.generateToken(authentication);
-            LoginResponse response = new LoginResponse();
-            response.setToken(jwt);
-            response.setName(name);
-            response.setEmail(email);
+            LoginResponse response = LoginResponse.builder()
+                                                  .token(jwt)
+                                                  .name(name)
+                                                  .email(email)
+                                                  .build();
             return ResponseEntity.ok(response);
 
         } else {

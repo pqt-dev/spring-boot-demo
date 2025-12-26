@@ -1,52 +1,50 @@
 package com.demo.spring_boot.controller.photo;
 
-import com.demo.spring_boot.dto.photo.PhotoDto;
-import com.demo.spring_boot.repository.AuthorRepository;
+import com.demo.spring_boot.dto.photo.PhotoResponse;
 import com.demo.spring_boot.response.ApiResponse;
 import com.demo.spring_boot.service.photo.PhotoService;
 import io.jsonwebtoken.Claims;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 
 @RestController
 public class PhotoRestController {
 
-    final private AuthorRepository authorRepository;
-    final private PhotoService photoService;
+    final private PhotoService service;
 
-    @Autowired
-    public PhotoRestController(AuthorRepository authorRepository, PhotoService photoService) {
-        this.authorRepository = authorRepository;
-        this.photoService = photoService;
+    public PhotoRestController(
+            PhotoService service) {
+        this.service = service;
     }
 
     @GetMapping("/my_photos")
-    ResponseEntity<ApiResponse<Page<PhotoDto>>> fetch(@AuthenticationPrincipal Claims claims,
-                                                      @RequestParam(defaultValue = "0") int page,
-                                                      @RequestParam(defaultValue = "10") int size) {
-        final Pageable pageable = PageRequest.of(page, size, Sort.by("id")
-                                                                 .descending());
-        final var email = claims.get("email", String.class);
-        final var author = authorRepository.findByEmail(email)
-                                           .orElseThrow();
-        return ResponseEntity.ok(ApiResponse.<Page<PhotoDto>>builder()
-                                            .data(photoService.findPhotosByAuthor(author, pageable)
-                                                              .map(response -> PhotoDto.builder()
-                                                                                       .id(response.getId())
-                                                                                       .photoUrl(response.getPhotoUrl())
-                                                                                       .uploadedAt(
-                                                                                               response.getUploadedAt())
-                                                                                       .isLocal(response.getIsLocal())
-                                                                                       .build()))
+    ResponseEntity<ApiResponse<Page<PhotoResponse>>> fetch(
+            @AuthenticationPrincipal Claims claims,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+
+        final String email = (String) claims.get("email");
+        return ResponseEntity.ok(ApiResponse.<Page<PhotoResponse>>builder()
+                                            .data(service.fetchUserPhotos(email, page, size))
+                                            .build());
+    }
+
+    @RequestMapping(value = "/uploads", method = RequestMethod.POST)
+    public ResponseEntity<ApiResponse<List<PhotoResponse>>> uploadFile(@RequestParam("files") List<MultipartFile> files,
+                                                                       @AuthenticationPrincipal Claims claims)
+            throws IOException {
+        final String email = (String) claims.get("email");
+        final var photos = service.uploads(email, files);
+        return ResponseEntity.ok(ApiResponse.<List<PhotoResponse>>builder()
+                                            .data(photos)
                                             .build());
     }
 

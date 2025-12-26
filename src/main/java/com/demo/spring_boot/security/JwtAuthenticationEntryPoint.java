@@ -32,7 +32,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         final var error = ApiResponse.<DetailsErrorResponse>builder()
                                      .data(DetailsErrorResponse.builder()
                                                                .details(
-                                                                       List.of(ErrorType.AUTH_FORBIDDEN.getDetails()))
+                                                                       List.of(ErrorType.AUTH_FORBIDDEN.getDefaultMessage()))
                                                                .build())
                                      .code(ErrorType.AUTH_FORBIDDEN.getCode())
                                      .message(authException.getMessage())

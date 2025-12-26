@@ -1,12 +1,7 @@
 package com.demo.spring_boot.service.photo;
 
-import com.demo.spring_boot.entity.author.Author;
-import com.demo.spring_boot.entity.photo.Photo;
-import com.demo.spring_boot.repository.PhotoRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,19 +14,15 @@ import java.util.List;
 
 @Service
 @Profile("dev")
-public class LocalPhotoService implements PhotoService {
-    final private PhotoRepository repository;
+public class LocalUploadPhotoService implements UploadPhotoService {
+    final PhotoValidationService photoValidationService;
     @Value("${app.storage.local.path}")
     private String uploadDirectory;
 
-    public LocalPhotoService(PhotoRepository repository) {
-        this.repository = repository;
+    public LocalUploadPhotoService(PhotoValidationService photoValidationService) {
+        this.photoValidationService = photoValidationService;
     }
 
-    @Override
-    public Page<Photo> findPhotosByAuthor(Author author, Pageable pageable) {
-        return repository.findByAuthorAndIsLocalTrue(author, pageable);
-    }
 
     @Override
     public List<String> upload(List<MultipartFile> files) throws IOException {
@@ -42,23 +33,13 @@ public class LocalPhotoService implements PhotoService {
             Files.createDirectories(uploadPath);
         }
         for (MultipartFile file : files) {
-            result.add(singleUpload(file));
+            result.add(singleUploadFile(file));
         }
         return result;
     }
 
-    @Override
-    public Photo savePhoto(Author author, String url) {
-        final var response = repository.save(Photo.builder()
-                                                  .author(author)
-                                                  .photoUrl(url)
-                                                  .isLocal(true)
-                                                  .build());
-        repository.flush();
-        return response;
-    }
-
-    private String singleUpload(MultipartFile file) throws IOException {
+    private String singleUploadFile(MultipartFile file) throws IOException {
+        photoValidationService.validateImage(file);
         String rootPath = System.getProperty("user.dir");
         Path uploadPath = Paths.get(rootPath, uploadDirectory);
         String originalFilename = file.getOriginalFilename();

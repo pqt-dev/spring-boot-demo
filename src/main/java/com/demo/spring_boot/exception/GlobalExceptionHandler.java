@@ -3,6 +3,7 @@ package com.demo.spring_boot.exception;
 import com.demo.spring_boot.response.ApiResponse;
 import com.demo.spring_boot.response.DetailsErrorResponse;
 import com.google.api.gax.rpc.UnauthenticatedException;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -55,7 +56,7 @@ public class GlobalExceptionHandler {
         final var response = ApiResponse.<DetailsErrorResponse>builder()
                                         .data(DetailsErrorResponse.builder()
                                                                   .details(
-                                                                          List.of(ErrorType.AUTH_INVALID_CREDENTIALS.getDetails()))
+                                                                          List.of(ErrorType.AUTH_INVALID_CREDENTIALS.getDefaultMessage()))
                                                                   .build())
                                         .code(ErrorType.AUTH_INVALID_CREDENTIALS.getCode())
                                         .message(ex.getMessage())
@@ -70,7 +71,7 @@ public class GlobalExceptionHandler {
         final var response = ApiResponse.<DetailsErrorResponse>builder()
                                         .data(DetailsErrorResponse.builder()
                                                                   .details(
-                                                                          List.of(ErrorType.AUTH_FORBIDDEN.getDetails()))
+                                                                          List.of(ErrorType.AUTH_FORBIDDEN.getDefaultMessage()))
                                                                   .build())
                                         .code(ErrorType.AUTH_FORBIDDEN.getCode())
                                         .message(ex.getMessage())
@@ -82,15 +83,29 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ApiResponse<DetailsErrorResponse>> handleMaxUploadSizeExceededException(
             MaxUploadSizeExceededException ex) {
+        final var cause = ex.getCause()
+                            .getCause();
+        if (cause instanceof FileSizeLimitExceededException) {
+            final var response = ApiResponse.<DetailsErrorResponse>builder()
+                                            .data(DetailsErrorResponse.builder()
+                                                                      .details(
+                                                                              List.of(ErrorType.FILE_SIZE_LIMIT.getDefaultMessage()))
+                                                                      .build())
+                                            .code(ErrorType.FILE_SIZE_LIMIT.getCode())
+                                            .message(ex.getMessage())
+                                            .build();
+            return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE.value())
+                                 .body(response);
+        }
         final var response = ApiResponse.<DetailsErrorResponse>builder()
                                         .data(DetailsErrorResponse.builder()
                                                                   .details(
-                                                                          List.of(ErrorType.MAX_UPLOAD_SIZE.getDetails()))
+                                                                          List.of(ErrorType.REQUEST_SIZE_LIMIT.getDefaultMessage()))
                                                                   .build())
-                                        .code(ErrorType.MAX_UPLOAD_SIZE.getCode())
+                                        .code(ErrorType.REQUEST_SIZE_LIMIT.getCode())
                                         .message(ex.getMessage())
                                         .build();
-        return ResponseEntity.badRequest()
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE.value())
                              .body(response);
     }
 
@@ -99,7 +114,7 @@ public class GlobalExceptionHandler {
         final var response = ApiResponse.<DetailsErrorResponse>builder()
                                         .data(DetailsErrorResponse.builder()
                                                                   .details(
-                                                                          List.of(ErrorType.FILE_TYPE_INVALID.getDetails()))
+                                                                          List.of(ErrorType.FILE_TYPE_INVALID.getDefaultMessage()))
                                                                   .build())
                                         .code(ErrorType.FILE_TYPE_INVALID.getCode())
                                         .message(ex.getMessage())
@@ -107,4 +122,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
                              .body(response);
     }
+
+
 }
